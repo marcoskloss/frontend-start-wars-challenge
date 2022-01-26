@@ -11,12 +11,18 @@ export const GlobalStyle = createGlobalStyle`
         'Helvetica Neue', sans-serif;
     }
 
+    html, body, #root {
+        height: 100%;
+    }
+
     input {
         font-size: inherit;
+        color: inherit;
     }
-
 
     button {
+        color: inherit;
         cursor: pointer;
     }
+
 `;
