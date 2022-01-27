@@ -4,7 +4,7 @@ const styles = {
   global: (props) => {
     return {
       body: {
-        color: "#CFCDC1",
+        color: props.theme.colors.text,
         bg: props.theme.colors.darkBlue,
       },
     };
@@ -12,9 +12,10 @@ const styles = {
 };
 
 const colors = {
-  darkBlue: "#020B1A",
+  darkBlue: { base: "#020B1A", 600: "#0c182b" },
   lightPurple: "#7979B8",
   darkPurple: "#30303E",
+  text: "#CFCDC1",
 };
 
 const config = {
