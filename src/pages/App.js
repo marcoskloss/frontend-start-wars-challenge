@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import {
   Box,
-  Button,
   Flex,
   SimpleGrid,
   GridItem,
@@ -12,7 +11,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 
-import { Card, Tag, Layout, Input } from "../components";
+import { Card, Tag, Layout, Input, Button } from "../components";
 import { api } from "../lib/api";
 
 export const App = () => {
@@ -46,15 +45,13 @@ export const App = () => {
 
   return (
     <Layout>
-      <Box>
-        <Box as="form">
-          <Input
-            name="filterInput"
-            label="Character name"
-            value={inputValue}
-            onChange={(ev) => setInputValue(ev.target.value)}
-          />
-        </Box>
+      <Box as="form">
+        <Input
+          name="filterInput"
+          label="Character name"
+          value={inputValue}
+          onChange={(ev) => setInputValue(ev.target.value)}
+        />
       </Box>
 
       <Box py={8}>
@@ -90,12 +87,9 @@ export const App = () => {
         {loadMore.show && (
           <Flex justifyContent="center" mt="8">
             <Button
-              bg={theme.colors.lightPurple}
-              isLoading={isLoading}
+              content="Load More"
               loadingText="Loading"
-              _hover={{
-                filter: "brightness(0.85)",
-              }}
+              isLoading={isLoading}
               onClick={async () => {
                 setIsLoading(true);
 
@@ -116,9 +110,7 @@ export const App = () => {
                 setPeople((prevState) => [...prevState, ...values]);
                 setLoadMore({ show: !!data.next, nextUrl: data.next });
               }}
-            >
-              Load More
-            </Button>
+            />
           </Flex>
         )}
       </Box>
