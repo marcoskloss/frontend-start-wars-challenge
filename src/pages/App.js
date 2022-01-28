@@ -4,18 +4,15 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
-  FormLabel,
   SimpleGrid,
   GridItem,
-  Input,
   Text,
   useTheme,
   HStack,
   Spinner,
 } from "@chakra-ui/react";
 
-import { Card, Tag, Layout } from "../components";
+import { Card, Tag, Layout, Input } from "../components";
 import { api } from "../lib/api";
 
 export const App = () => {
@@ -51,16 +48,12 @@ export const App = () => {
     <Layout>
       <Box>
         <Box as="form">
-          <FormControl py={3}>
-            <FormLabel htmlFor="input">Character name</FormLabel>
-            <Input
-              id="input"
-              w="300px"
-              focusBorderColor={theme.colors.lightPurple}
-              value={inputValue}
-              onChange={(ev) => setInputValue(ev.target.value)}
-            />
-          </FormControl>
+          <Input
+            name="filterInput"
+            label="Character name"
+            value={inputValue}
+            onChange={(ev) => setInputValue(ev.target.value)}
+          />
         </Box>
       </Box>
 
