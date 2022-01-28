@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Card, Tag, Layout, Input, Button } from "../components";
-import { api } from "../lib/api";
+import { doRequest } from "../lib/api";
 
 export const App = () => {
   const theme = useTheme();
@@ -24,9 +24,16 @@ export const App = () => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await api.get("/people");
+      const [{ data }, error] = await doRequest({
+        url: "/people",
+        setIsLoading,
+      });
 
-      console.log(data);
+      if (error) {
+        console.log(error);
+        alert("Error when fetching data!");
+        return;
+      }
 
       setPeople(
         data.results.map((item) => ({
@@ -37,9 +44,7 @@ export const App = () => {
           height: `${item.height} cm`,
         }))
       );
-
       setLoadMore({ show: !!data.next, nextUrl: data.next });
-      setIsLoading(false);
     })();
   }, []);
 
@@ -91,13 +96,16 @@ export const App = () => {
               loadingText="Loading"
               isLoading={isLoading}
               onClick={async () => {
-                setIsLoading(true);
-
-                const { data } = await api.get(loadMore.nextUrl, {
-                  baseURL: "",
+                const [{ data }, error] = await doRequest({
+                  url: loadMore.nextUrl,
+                  config: { baseUrl: "" },
                 });
 
-                setIsLoading(false);
+                if (error) {
+                  console.log(error);
+                  alert("Error when fetching data!");
+                  return;
+                }
 
                 const values = data.results.map((item) => ({
                   name: item.name,
