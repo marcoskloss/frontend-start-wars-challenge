@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Flex,
@@ -22,31 +22,55 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const [{ data }, error] = await doRequest({
-        url: "/people",
-        setIsLoading,
-      });
+  const handleFetchInitialList = useCallback(async () => {
+    const [{ data }, error] = await doRequest({
+      url: "/people",
+      setIsLoading,
+    });
 
-      if (error) {
-        console.log(error);
-        alert("Error when fetching data!");
-        return;
-      }
+    if (error) {
+      console.log(error);
+      alert("Error when fetching data!");
+      return;
+    }
 
-      setPeople(
-        data.results.map((item) => ({
-          name: item.name,
-          url: item.url,
-          mass: `${item.mass} kg`,
-          gender: item.gender,
-          height: `${item.height} cm`,
-        }))
-      );
-      setLoadMore({ show: !!data.next, nextUrl: data.next });
-    })();
+    setPeople(
+      data.results.map((item) => ({
+        name: item.name,
+        url: item.url,
+        mass: `${item.mass} kg`,
+        gender: item.gender,
+        height: `${item.height} cm`,
+      }))
+    );
+    setLoadMore({ show: !!data.next, nextUrl: data.next });
   }, []);
+
+  const handleFetchNext = async () => {
+    const [{ data }, error] = await doRequest({
+      url: loadMore.nextUrl,
+      config: { baseUrl: "" },
+    });
+
+    if (error) {
+      console.log(error);
+      alert("Error when fetching data!");
+      return;
+    }
+
+    const values = data.results.map((item) => ({
+      name: item.name,
+      url: item.url,
+      mass: `${item.mass} kg`,
+      gender: item.gender,
+      height: `${item.height} cm`,
+    }));
+
+    setPeople((prevState) => [...prevState, ...values]);
+    setLoadMore({ show: !!data.next, nextUrl: data.next });
+  };
+
+  useEffect(handleFetchInitialList, [handleFetchInitialList]);
 
   return (
     <Layout>
@@ -95,29 +119,7 @@ export const App = () => {
               content="Load More"
               loadingText="Loading"
               isLoading={isLoading}
-              onClick={async () => {
-                const [{ data }, error] = await doRequest({
-                  url: loadMore.nextUrl,
-                  config: { baseUrl: "" },
-                });
-
-                if (error) {
-                  console.log(error);
-                  alert("Error when fetching data!");
-                  return;
-                }
-
-                const values = data.results.map((item) => ({
-                  name: item.name,
-                  url: item.url,
-                  mass: `${item.mass} kg`,
-                  gender: item.gender,
-                  height: `${item.height} cm`,
-                }));
-
-                setPeople((prevState) => [...prevState, ...values]);
-                setLoadMore({ show: !!data.next, nextUrl: data.next });
-              }}
+              onClick={handleFetchNext}
             />
           </Flex>
         )}
