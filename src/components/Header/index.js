@@ -2,7 +2,6 @@ import * as React from "react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   HStack,
-  Text,
   Menu,
   MenuButton,
   MenuList,

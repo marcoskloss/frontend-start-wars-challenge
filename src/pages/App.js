@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,21 +11,22 @@ import {
   Input,
   Text,
   useTheme,
+  HStack,
+  Spinner,
 } from "@chakra-ui/react";
 
-import { Header } from "../components/Header";
-import { Card } from "../components/Card";
+import { Header, Card, Tag } from "../components";
 import { api } from "../lib/api";
 
 export const App = () => {
   const theme = useTheme();
-  console.log(theme);
 
-  const [people, setPeople] = React.useState([]);
-  const [loadMore, setLoadMore] = React.useState({ show: false, nextUrl: "" });
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [people, setPeople] = useState([]);
+  const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
+  const [isLoading, setIsLoading] = useState(true);
+  const [inputValue, setInputValue] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const { data } = await api.get("/people");
 
@@ -34,6 +36,9 @@ export const App = () => {
         data.results.map((item) => ({
           name: item.name,
           url: item.url,
+          mass: `${item.mass} kg`,
+          gender: item.gender,
+          height: `${item.height} cm`,
         }))
       );
 
@@ -52,34 +57,56 @@ export const App = () => {
             <Box as="form">
               <FormControl py={3}>
                 <FormLabel htmlFor="input">Character name</FormLabel>
-                <Input id="input" w="300px" />
+                <Input
+                  id="input"
+                  w="300px"
+                  focusBorderColor={theme.colors.lightPurple}
+                  value={inputValue}
+                  onChange={(ev) => setInputValue(ev.target.value)}
+                />
               </FormControl>
             </Box>
           </Box>
 
           <Box py={8}>
             <SimpleGrid rowGap={6} columnGap={4} columns={{ base: 1, md: 2 }}>
-              {people.map((item) => (
-                <GridItem key={item.name}>
-                  <Card
-                    bg={theme.colors.darkBlue["600"]}
-                    _hover={{
-                      color: theme.colors.lightPurple,
-                    }}
-                  >
-                    <Text>{item.name}</Text>
-                  </Card>
-                </GridItem>
-              ))}
+              {people
+                .filter((item) =>
+                  inputValue
+                    ? item.name.toLowerCase().includes(inputValue.toLowerCase())
+                    : true
+                )
+                .map((item) => (
+                  <GridItem key={item.name}>
+                    <Card
+                      bg={theme.colors.darkBlue["600"]}
+                      _hover={{
+                        color: theme.colors.lightPurple,
+                      }}
+                    >
+                      <Text>{item.name}</Text>
+
+                      <HStack gap={1} mt={3}>
+                        <Tag title={"Gender"} value={item.gender} />
+                        <Tag title={"Mass"} value={item.mass} />
+                        <Tag title={"Height"} value={item.height} />
+                      </HStack>
+                    </Card>
+                  </GridItem>
+                ))}
             </SimpleGrid>
 
-            {isLoading && <Text>Loading...</Text>}
+            {isLoading && <Spinner my={4} mx="auto" display="block" />}
 
             {loadMore.show && (
               <Flex justifyContent="center" mt="8">
                 <Button
                   bg={theme.colors.lightPurple}
-                  disabled={isLoading}
+                  isLoading={isLoading}
+                  loadingText="Loading"
+                  _hover={{
+                    filter: "brightness(0.85)",
+                  }}
                   onClick={async () => {
                     setIsLoading(true);
 
@@ -92,13 +119,16 @@ export const App = () => {
                     const values = data.results.map((item) => ({
                       name: item.name,
                       url: item.url,
+                      mass: `${item.mass} kg`,
+                      gender: item.gender,
+                      height: `${item.height} cm`,
                     }));
 
                     setPeople((prevState) => [...prevState, ...values]);
                     setLoadMore({ show: !!data.next, nextUrl: data.next });
                   }}
                 >
-                  {isLoading ? "Loading" : "Load more"}
+                  Load More
                 </Button>
               </Flex>
             )}
