@@ -5,3 +5,5 @@ export * from "./Tag";
 export * from "./Layout";
 export * from "./Input";
 export * from "./Button";
+export * from "./TagsContainer";
+export * from "./GridList";
