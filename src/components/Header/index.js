@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   HStack,
@@ -13,15 +14,23 @@ import {
 import { NavItem } from "../NavItem";
 
 export const Header = () => {
+  const { pathname } = useLocation();
+
   return (
     <HStack w="100%" maxW={800} m="auto" p="3.5">
       <HStack w="100%" justify="space-between">
         <Heading>STsocial</Heading>
 
         <HStack as="nav" gap={8} display={{ base: "none", md: "flex" }}>
-          <NavItem hasFocus>Characters</NavItem>
-          <NavItem>Planets</NavItem>
-          <NavItem>Species</NavItem>
+          <Link to="/">
+            <NavItem hasFocus={pathname === "/"}>Characters</NavItem>
+          </Link>
+          <Link to="/planets">
+            <NavItem hasFocus={pathname.includes("/planets")}>Planets</NavItem>
+          </Link>
+          <Link to="/species">
+            <NavItem hasFocus={pathname.includes("/species")}>Species</NavItem>
+          </Link>
         </HStack>
 
         <Box display={{ base: "inline-block", md: "none" }}>
@@ -34,9 +43,15 @@ export const Header = () => {
                   icon={<HamburgerIcon />}
                 />
                 <MenuList>
-                  <MenuItem>Characters</MenuItem>
-                  <MenuItem>Planets</MenuItem>
-                  <MenuItem>Species</MenuItem>
+                  <Link to="/">
+                    <MenuItem>Characters</MenuItem>
+                  </Link>
+                  <Link to="/planets">
+                    <MenuItem>Planets</MenuItem>
+                  </Link>
+                  <Link to="/species">
+                    <MenuItem>Species</MenuItem>
+                  </Link>
                 </MenuList>
               </>
             )}
