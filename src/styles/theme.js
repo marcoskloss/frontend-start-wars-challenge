@@ -16,6 +16,7 @@ const colors = {
   lightPurple: "#7979B8",
   darkPurple: "#30303E",
   text: "#CFCDC1",
+  darkGreen: "#071104"
 };
 
 const config = {
