@@ -12,11 +12,12 @@ import {
   TagsContainer,
 } from "../components";
 import { doRequest } from "../lib/api";
+import { useListContext } from "../context/listContext";
 
 export const PlanetsPage = () => {
+  const { planets, setPlanets } = useListContext();
   const theme = useTheme();
 
-  const [planets, setPlanets] = useState([]);
   const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
@@ -48,6 +49,7 @@ export const PlanetsPage = () => {
     const [{ data }, error] = await doRequest({
       url: loadMore.nextUrl,
       config: { baseUrl: "" },
+      setIsLoading
     });
 
     if (error) {

@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Box, Flex, GridItem, Text, useTheme, Spinner } from "@chakra-ui/react";
 
+import { useListContext } from "../context/listContext";
 import {
   Card,
   Tag,
@@ -14,9 +15,9 @@ import {
 import { doRequest } from "../lib/api";
 
 export const HomePage = () => {
+  const {people, setPeople} = useListContext();
   const theme = useTheme();
 
-  const [people, setPeople] = useState([]);
   const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
@@ -49,6 +50,7 @@ export const HomePage = () => {
     const [{ data }, error] = await doRequest({
       url: loadMore.nextUrl,
       config: { baseUrl: "" },
+      setIsLoading
     });
 
     if (error) {

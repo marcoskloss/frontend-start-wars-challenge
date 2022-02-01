@@ -12,13 +12,14 @@ import {
   TagsContainer,
 } from "../components";
 import { doRequest } from "../lib/api";
+import { useListContext } from "../context/listContext";
 
 export const SpeciesPage = () => {
+  const { species, setSpecies } = useListContext();
   const theme = useTheme();
 
-  const [species, setSpecies] = useState([]);
   const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const handleFetchInitialList = useCallback(async () => {
@@ -26,8 +27,6 @@ export const SpeciesPage = () => {
       url: "/species",
       setIsLoading,
     });
-
-    console.log(data)
 
     if (error) {
       console.log(error);
@@ -49,6 +48,7 @@ export const SpeciesPage = () => {
     const [{ data }, error] = await doRequest({
       url: loadMore.nextUrl,
       config: { baseUrl: "" },
+      setIsLoading
     });
 
     if (error) {

@@ -4,6 +4,7 @@ import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 
 import { GlobalStyle } from "./styles/GlobalStyle";
 import { App } from "./pages/App";
+import { ListContextProvider } from "./context/listContext";
 import theme from "./styles/theme";
 
 ReactDOM.render(
@@ -11,7 +12,9 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <GlobalStyle />
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <App />
+      <ListContextProvider>
+        <App />
+      </ListContextProvider>
     </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")
