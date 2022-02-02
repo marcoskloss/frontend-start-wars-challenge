@@ -10,9 +10,9 @@ import {
   Button,
   GridList,
   TagsContainer,
-} from "../components";
-import { doRequest } from "../lib/api";
-import { useListContext } from "../context/listContext";
+} from "../../components";
+import { doRequest } from "../../lib/api";
+import { useListContext } from "../../context/listContext";
 
 export const PlanetsPage = () => {
   const { planets, setPlanets } = useListContext();

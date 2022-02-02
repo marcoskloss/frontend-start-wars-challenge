@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import { HomePage } from ".";
+import { HomePage } from "./People"
 import { PlanetsPage } from "./Planets";
 import { SpeciesPage } from "./Species";
 

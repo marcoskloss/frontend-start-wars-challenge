@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Box, Flex, GridItem, Text, useTheme, Spinner } from "@chakra-ui/react";
 
-import { useListContext } from "../context/listContext";
 import {
   Card,
   Tag,
@@ -11,20 +10,21 @@ import {
   Button,
   GridList,
   TagsContainer,
-} from "../components";
-import { doRequest } from "../lib/api";
+} from "../../components";
+import { doRequest } from "../../lib/api";
+import { useListContext } from "../../context/listContext";
 
-export const HomePage = () => {
-  const {people, setPeople} = useListContext();
+export const SpeciesPage = () => {
+  const { species, setSpecies } = useListContext();
   const theme = useTheme();
 
   const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const handleFetchInitialList = useCallback(async () => {
     const [{ data }, error] = await doRequest({
-      url: "/people",
+      url: "/species",
       setIsLoading,
     });
 
@@ -34,15 +34,13 @@ export const HomePage = () => {
       return;
     }
 
-    setPeople(
-      data.results.map((item) => ({
-        name: item.name,
-        url: item.url,
-        mass: `${item.mass} kg`,
-        gender: item.gender,
-        height: `${item.height} cm`,
-      }))
-    );
+    setSpecies(data.results.map(item => ({
+      name: item.name,
+      url: item.url,
+      classification: item.classification,
+      language: item.language
+    })));
+
     setLoadMore({ show: !!data.next, nextUrl: data.next });
   }, []);
 
@@ -62,23 +60,23 @@ export const HomePage = () => {
     const values = data.results.map((item) => ({
       name: item.name,
       url: item.url,
-      mass: `${item.mass} kg`,
-      gender: item.gender,
-      height: `${item.height} cm`,
+      classification: item.classification,
+      language: item.language
     }));
 
-    setPeople((prevState) => [...prevState, ...values]);
+    setSpecies((prevState) => [...prevState, ...values]);
     setLoadMore({ show: !!data.next, nextUrl: data.next });
   };
 
   useEffect(handleFetchInitialList, [handleFetchInitialList]);
 
   return (
-    <Layout>
+    <Layout bg={theme.colors.pink["900"]}>
       <Box as="form">
         <Input
           name="filterInput"
-          label="Character name"
+          label="Specie name"
+          focusBorderColor={theme.colors.pink["400"]}
           value={inputValue}
           onChange={(ev) => setInputValue(ev.target.value)}
         />
@@ -86,7 +84,7 @@ export const HomePage = () => {
 
       <Box py={8}>
         <GridList>
-          {people
+          {species
             .filter((item) =>
               inputValue
                 ? item.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -95,17 +93,17 @@ export const HomePage = () => {
             .map((item) => (
               <GridItem key={item.name}>
                 <Card
-                  bg={theme.colors.darkBlue["600"]}
+                  color={theme.colors.darkBlue.base}
+                  bg={theme.colors.pink["400"]}
                   _hover={{
-                    color: theme.colors.lightPurple,
+                    color: theme.colors.pink["900"]
                   }}
                 >
                   <Text>{item.name}</Text>
 
                   <TagsContainer>
-                    <Tag title={"Gender"} value={item.gender} />
-                    <Tag title={"Mass"} value={item.mass} />
-                    <Tag title={"Height"} value={item.height} />
+                    <Tag title={"Language"} value={item.language} bg={theme.colors.pink["700"]} />
+                    <Tag title={"Classification"} value={item.classification} bg={theme.colors.pink["700"]}/>
                   </TagsContainer>
                 </Card>
               </GridItem>
@@ -119,6 +117,7 @@ export const HomePage = () => {
             <Button
               content="Load More"
               loadingText="Loading"
+              bg={theme.colors.pink["700"]}
               isLoading={isLoading}
               onClick={handleFetchNext}
             />
