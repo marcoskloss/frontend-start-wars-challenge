@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import { Box, useTheme, Heading, SimpleGrid, HStack } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -6,6 +7,21 @@ import { Tag, ModalContainer } from "../../components";
 
 export const PeopleDetails = ({ onClose, data }) => {
   const theme = useTheme();
+  useEffect(() => {
+    const escapeKey = "Escape";
+
+    const keydownListener = (ev) => {
+      if (ev.key !== escapeKey) return;
+
+      onClose();
+    };
+
+    document.addEventListener("keydown", keydownListener);
+
+    return () => {
+      document.removeEventListener("keydown", keydownListener);
+    };
+  }, [onClose]);
 
   return (
     <ModalContainer
