@@ -7,3 +7,4 @@ export * from "./Input";
 export * from "./Button";
 export * from "./TagsContainer";
 export * from "./GridList";
+export * from "./Modal";
