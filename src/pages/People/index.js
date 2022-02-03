@@ -16,13 +16,14 @@ import {
 import { doRequest } from "../../lib/api";
 
 export const HomePage = () => {
-  const {people, setPeople} = useListContext();
+  const { people, setPeople } = useListContext();
   const theme = useTheme();
 
   const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
-  const [showModal, setShowModal] = useState(false);
+
+  const [modal, setModal] = useState({ show: false, data: {} });
 
   const handleFetchInitialList = useCallback(async () => {
     const [{ data }, error] = await doRequest({
@@ -46,13 +47,13 @@ export const HomePage = () => {
       }))
     );
     setLoadMore({ show: !!data.next, nextUrl: data.next });
-  }, []);
+  }, [setPeople]);
 
   const handleFetchNext = async () => {
     const [{ data }, error] = await doRequest({
       url: loadMore.nextUrl,
       config: { baseUrl: "" },
-      setIsLoading
+      setIsLoading,
     });
 
     if (error) {
@@ -73,14 +74,47 @@ export const HomePage = () => {
     setLoadMore({ show: !!data.next, nextUrl: data.next });
   };
 
+  const getPersonData = useCallback(async (url) => {
+    const [{ data }, error] = await doRequest({ url, setIsLoading });
+
+    if (error) {
+      console.log(error);
+      alert("Error when fetching data!");
+      return;
+    }
+
+    setModal({
+      show: true,
+      data: {
+        title: data.name,
+        content: [
+          ["Gender", data.gender],
+          ["Height", `${data.height} cm`],
+          ["Mass", `${data.mass} kg`],
+          ["Skin color", data.skin_color],
+          ["Eye color", data.eye_color],
+          ["Hair color", data.hair_color],
+          ["Birth year", data.birth_year],
+        ],
+      },
+    });
+
+    console.log(data);
+  }, []);
+
   useEffect(handleFetchInitialList, [handleFetchInitialList]);
 
   return (
     <>
-      {showModal && <PeopleDetails />}
+      {modal.show && (
+        <PeopleDetails
+          data={modal.data}
+          onClose={() => setModal({ show: false, data: {} })}
+        />
+      )}
+
       <Layout>
         <Box as="form">
-          <button type="button" onClick={() => setShowModal(true)}>click</button>
           <Input
             name="filterInput"
             label="Character name"
@@ -98,7 +132,10 @@ export const HomePage = () => {
                   : true
               )
               .map((item) => (
-                <GridItem key={item.name}>
+                <GridItem
+                  key={item.name}
+                  onClick={() => getPersonData(item.url)}
+                >
                   <Card
                     bg={theme.colors.darkBlue["600"]}
                     _hover={{

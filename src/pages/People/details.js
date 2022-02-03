@@ -1,18 +1,12 @@
 import * as React from "react";
-import styled from "styled-components";
-import { Box } from "@chakra-ui/react";
+import { Box, useTheme, Heading, SimpleGrid, HStack } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
 
-const ModalContainer = styled(Box)`
-  backdrop-filter: blur(2px);
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-`;
+import { Tag, ModalContainer } from "../../components";
 
-export const PeopleDetails = () => {
+export const PeopleDetails = ({ onClose, data }) => {
+  const theme = useTheme();
+
   return (
     <ModalContainer
       display="flex"
@@ -25,9 +19,28 @@ export const PeopleDetails = () => {
         w="90%"
         maxH={600}
         h="90%"
+        p={6}
         border="1px solid white"
         borderRadius="xl"
-      />
+      >
+        <HStack as="header" alignItems="center" mb={6} spacing="auto">
+          <Heading as="h2">{data.title}</Heading>
+
+          <CloseIcon h={5} w={5} cursor="pointer" onClick={onClose}></CloseIcon>
+        </HStack>
+
+        <Box w="120px" h="120px" border="1px solid white" mb={6} />
+
+        <SimpleGrid
+          bg={theme.colors.darkBlue.base}
+          columns={{ base: 1, md: 3 }}
+          gap={8}
+        >
+          {data.content?.map(([key, value]) => (
+            <Tag key={key} title={key} value={value} p={2} fontSize={16} />
+          ))}
+        </SimpleGrid>
+      </Box>
     </ModalContainer>
   );
 };
