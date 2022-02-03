@@ -34,21 +34,23 @@ export const SpeciesPage = () => {
       return;
     }
 
-    setSpecies(data.results.map(item => ({
-      name: item.name,
-      url: item.url,
-      classification: item.classification,
-      language: item.language
-    })));
+    setSpecies(
+      data.results.map((item) => ({
+        name: item.name,
+        url: item.url,
+        classification: item.classification,
+        language: item.language,
+      }))
+    );
 
     setLoadMore({ show: !!data.next, nextUrl: data.next });
-  }, []);
+  }, [setSpecies]);
 
   const handleFetchNext = async () => {
     const [{ data }, error] = await doRequest({
       url: loadMore.nextUrl,
       config: { baseUrl: "" },
-      setIsLoading
+      setIsLoading,
     });
 
     if (error) {
@@ -61,7 +63,7 @@ export const SpeciesPage = () => {
       name: item.name,
       url: item.url,
       classification: item.classification,
-      language: item.language
+      language: item.language,
     }));
 
     setSpecies((prevState) => [...prevState, ...values]);
@@ -96,14 +98,22 @@ export const SpeciesPage = () => {
                   color={theme.colors.darkBlue.base}
                   bg={theme.colors.pink["400"]}
                   _hover={{
-                    color: theme.colors.pink["900"]
+                    color: theme.colors.pink["900"],
                   }}
                 >
                   <Text>{item.name}</Text>
 
                   <TagsContainer>
-                    <Tag title={"Language"} value={item.language} bg={theme.colors.pink["700"]} />
-                    <Tag title={"Classification"} value={item.classification} bg={theme.colors.pink["700"]}/>
+                    <Tag
+                      title={"Language"}
+                      value={item.language}
+                      bg={theme.colors.pink["700"]}
+                    />
+                    <Tag
+                      title={"Classification"}
+                      value={item.classification}
+                      bg={theme.colors.pink["700"]}
+                    />
                   </TagsContainer>
                 </Card>
               </GridItem>

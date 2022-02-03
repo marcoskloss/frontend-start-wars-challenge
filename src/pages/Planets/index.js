@@ -34,22 +34,24 @@ export const PlanetsPage = () => {
       return;
     }
 
-    setPlanets(data.results.map(item => ({
-      name: item.name,
-      climate: item.climate,
-      terrain: item.terrain,
-      population: item.population,
-      url: item.url
-    })));
+    setPlanets(
+      data.results.map((item) => ({
+        name: item.name,
+        climate: item.climate,
+        terrain: item.terrain,
+        population: item.population,
+        url: item.url,
+      }))
+    );
 
     setLoadMore({ show: !!data.next, nextUrl: data.next });
-  }, []);
+  }, [setPlanets]);
 
   const handleFetchNext = async () => {
     const [{ data }, error] = await doRequest({
       url: loadMore.nextUrl,
       config: { baseUrl: "" },
-      setIsLoading
+      setIsLoading,
     });
 
     if (error) {
@@ -63,7 +65,7 @@ export const PlanetsPage = () => {
       climate: item.climate,
       terrain: item.terrain,
       population: item.population,
-      url: item.url
+      url: item.url,
     }));
 
     setPlanets((prevState) => [...prevState, ...values]);
@@ -103,9 +105,21 @@ export const PlanetsPage = () => {
                   <Text>{item.name}</Text>
 
                   <TagsContainer>
-                    <Tag title={"Climate"} value={item.climate} bg={theme.colors.green["500"]}/>
-                    <Tag title={"Population"} value={item.population} bg={theme.colors.green["500"]} />
-                    <Tag title={"Terrain"} value={item.terrain} bg={theme.colors.green["500"]} />
+                    <Tag
+                      title={"Climate"}
+                      value={item.climate}
+                      bg={theme.colors.green["500"]}
+                    />
+                    <Tag
+                      title={"Population"}
+                      value={item.population}
+                      bg={theme.colors.green["500"]}
+                    />
+                    <Tag
+                      title={"Terrain"}
+                      value={item.terrain}
+                      bg={theme.colors.green["500"]}
+                    />
                   </TagsContainer>
                 </Card>
               </GridItem>
