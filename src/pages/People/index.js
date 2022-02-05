@@ -75,31 +75,26 @@ export const HomePage = () => {
     setLoadMore({ show: !!data.next, nextUrl: data.next });
   };
 
-  const getPersonData = useCallback(async (url) => {
-    const [{ data }, error] = await doRequest({ url, setIsLoading });
+  const getPersonData = useCallback(
+    async (url) => {
+      const [{ data }, error] = await doRequest({ url, setIsLoading });
 
-    if (error) {
-      console.log(error);
-      alert("Error when fetching data!");
-      return;
-    }
+      if (error) {
+        console.log(error);
+        alert("Error when fetching data!");
+        return;
+      }
 
-    setModal({
-      show: true,
-      data: {
-        title: data.name,
-        content: [
-          ["Gender", data.gender],
-          ["Height", `${data.height} cm`],
-          ["Mass", `${data.mass} kg`],
-          ["Skin color", data.skin_color],
-          ["Eye color", data.eye_color],
-          ["Hair color", data.hair_color],
-          ["Birth year", data.birth_year],
-        ],
-      },
-    });
-  }, []);
+      setModal({
+        show: true,
+        data: {
+          title: data.name,
+          content: data,
+        },
+      });
+    },
+    [setModal]
+  );
 
   useEffect(handleFetchInitialList, [handleFetchInitialList]);
 
