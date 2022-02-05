@@ -23,11 +23,7 @@ export const PeopleDetails = ({ onClose, data }) => {
 
         <Box w="120px" h="120px" border="1px solid white" mb={6} />
 
-        <SimpleGrid
-          bg={theme.colors.darkBlue.base}
-          columns={{ base: 1, md: 3 }}
-          gap={8}
-        >
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={8}>
           {data.content?.map(([key, value]) => (
             <Tag key={key} title={key} value={value} p={2} fontSize={16} />
           ))}

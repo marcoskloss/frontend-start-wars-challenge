@@ -9,20 +9,22 @@ export const ListContextProvider = ({ children }) => {
   const [planets, setPlanets] = useState([]);
 
   return (
-    <ListContext.Provider value={{
-      people,
+    <ListContext.Provider
+      value={{
+        people,
         setPeople,
         species,
         setSpecies,
         planets,
-        setPlanets
-    }}>
+        setPlanets,
+      }}
+    >
       {children}
     </ListContext.Provider>
   );
-}
+};
 
 export const useListContext = () => {
   const context = useContext(ListContext);
   return context;
-}
+};

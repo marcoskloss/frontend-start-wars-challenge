@@ -18,7 +18,6 @@ export const SModalContainer = styled(Box)`
 
 export const ModalContainer = ({ children, onClose, ...props }) => {
   useEffect(() => {
-    console.log("HELLO!");
     const escapeKey = "Escape";
 
     const keydownListener = (ev) => {
