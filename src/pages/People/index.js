@@ -14,6 +14,7 @@ import {
   TagsContainer,
 } from "../../components";
 import { doRequest } from "../../lib/api";
+import { useModal } from "../../hooks";
 
 export const HomePage = () => {
   const { people, setPeople } = useListContext();
@@ -23,7 +24,7 @@ export const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
 
-  const [modal, setModal] = useState({ show: false, data: {} });
+  const [modal, setModal] = useModal();
 
   const handleFetchInitialList = useCallback(async () => {
     const [{ data }, error] = await doRequest({
@@ -98,8 +99,6 @@ export const HomePage = () => {
         ],
       },
     });
-
-    console.log(data);
   }, []);
 
   useEffect(handleFetchInitialList, [handleFetchInitialList]);
