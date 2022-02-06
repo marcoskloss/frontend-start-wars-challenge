@@ -13,6 +13,8 @@ import {
 } from "../../components";
 import { doRequest } from "../../lib/api";
 import { useListContext } from "../../context/listContext";
+import { useModal } from "../../hooks";
+import { PlanetDetails } from "./details";
 
 export const PlanetsPage = () => {
   const { planets, setPlanets } = useListContext();
@@ -21,6 +23,8 @@ export const PlanetsPage = () => {
   const [loadMore, setLoadMore] = useState({ show: false, nextUrl: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
+
+  const [modal, setModal] = useModal();
 
   const handleFetchInitialList = useCallback(async () => {
     const [{ data }, error] = await doRequest({
@@ -72,74 +76,113 @@ export const PlanetsPage = () => {
     setLoadMore({ show: !!data.next, nextUrl: data.next });
   };
 
+  const getPlanetData = useCallback(
+    async (url) => {
+      const [{ data }, error] = await doRequest({ url, setIsLoading });
+
+      if (error) {
+        console.log(error);
+        alert("Error when fetching data!");
+        return;
+      }
+
+      const residents = await Promise.all(
+        data.residents.map(async (url) => {
+          const [{ data }] = await doRequest({ url, setIsLoading });
+          return data;
+        })
+      );
+
+      setModal({
+        show: true,
+        data: {
+          title: data.name,
+          content: { ...data, residents: residents?.map((item) => item.name) },
+        },
+      });
+    },
+    [setModal]
+  );
+
   useEffect(handleFetchInitialList, [handleFetchInitialList]);
 
   return (
-    <Layout bg={theme.colors.darkGreen}>
-      <Box as="form">
-        <Input
-          name="filterInput"
-          label="Planet name"
-          focusBorderColor={theme.colors.green["700"]}
-          value={inputValue}
-          onChange={(ev) => setInputValue(ev.target.value)}
+    <>
+      {modal.show && (
+        <PlanetDetails
+          data={modal.data}
+          onClose={() => setModal({ show: false, data: {} })}
         />
-      </Box>
+      )}
+      <Layout bg={theme.colors.darkGreen}>
+        <Box as="form">
+          <Input
+            name="filterInput"
+            label="Planet name"
+            focusBorderColor={theme.colors.green["700"]}
+            value={inputValue}
+            onChange={(ev) => setInputValue(ev.target.value)}
+          />
+        </Box>
 
-      <Box py={8}>
-        <GridList>
-          {planets
-            .filter((item) =>
-              inputValue
-                ? item.name.toLowerCase().includes(inputValue.toLowerCase())
-                : true
-            )
-            .map((item) => (
-              <GridItem key={item.name}>
-                <Card
-                  bg={theme.colors.green["700"]}
-                  _hover={{
-                    color: theme.colors.darkGreen,
-                  }}
+        <Box py={8}>
+          <GridList>
+            {planets
+              .filter((item) =>
+                inputValue
+                  ? item.name.toLowerCase().includes(inputValue.toLowerCase())
+                  : true
+              )
+              .map((item) => (
+                <GridItem
+                  key={item.name}
+                  onClick={() => getPlanetData(item.url)}
                 >
-                  <Text>{item.name}</Text>
+                  <Card
+                    bg={theme.colors.green["700"]}
+                    _hover={{
+                      color: theme.colors.darkGreen,
+                    }}
+                  >
+                    <Text>{item.name}</Text>
 
-                  <TagsContainer>
-                    <Tag
-                      title={"Climate"}
-                      value={item.climate}
-                      bg={theme.colors.green["500"]}
-                    />
-                    <Tag
-                      title={"Population"}
-                      value={item.population}
-                      bg={theme.colors.green["500"]}
-                    />
-                    <Tag
-                      title={"Terrain"}
-                      value={item.terrain}
-                      bg={theme.colors.green["500"]}
-                    />
-                  </TagsContainer>
-                </Card>
-              </GridItem>
-            ))}
-        </GridList>
+                    <TagsContainer>
+                      <Tag
+                        title={"Climate"}
+                        value={item.climate}
+                        bg={theme.colors.green["500"]}
+                      />
+                      <Tag
+                        title={"Population"}
+                        value={item.population}
+                        bg={theme.colors.green["500"]}
+                      />
+                      <Tag
+                        title={"Terrain"}
+                        value={item.terrain}
+                        bg={theme.colors.green["500"]}
+                      />
+                    </TagsContainer>
+                  </Card>
+                </GridItem>
+              ))}
+          </GridList>
 
-        {isLoading && <Spinner my={4} mx="auto" display="block" />}
+          {isLoading && <Spinner my={4} mx="auto" display="block" />}
 
-        {loadMore.show && (
-          <Flex justifyContent="center" mt="8">
-            <Button
-              content="Load More"
-              loadingText="Loading"
-              bg={theme.colors.green["700"]}
-              isLoading={isLoading}
-              onClick={handleFetchNext}
-            />
-          </Flex>
-        )}
-      </Box>
-    </Layout>
+          {loadMore.show && (
+            <Flex justifyContent="center" mt="8">
+              <Button
+                content="Load More"
+                loadingText="Loading"
+                bg={theme.colors.green["700"]}
+                isLoading={isLoading}
+                onClick={handleFetchNext}
+              />
+            </Flex>
+          )}
+        </Box>
+      </Layout>
+    </>
   );
 };
