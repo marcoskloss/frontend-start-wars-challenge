@@ -6,7 +6,7 @@ export const ModalContent = ({ children, ...props }) => {
     <Box
       maxW={800}
       w="90%"
-      maxH={600}
+      minH={600}
       h="90%"
       p={6}
       border="1px solid white"
