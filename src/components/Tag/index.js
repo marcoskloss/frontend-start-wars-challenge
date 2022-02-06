@@ -6,7 +6,7 @@ export const Tag = ({ title, value, ...props }) => {
 
   return (
     <ChakraTag size="sm" bg={theme.colors.lightPurple} p={1} {...props}>
-      {title}: {value}
+      {title && `${title} :`} {value}
     </ChakraTag>
   );
 };
