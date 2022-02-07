@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Box, Heading, SimpleGrid } from "@chakra-ui/react";
+import { Heading, SimpleGrid } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 
+import { PersonImage } from "./personImage";
 import {
   Tag,
   ModalContainer,
@@ -22,8 +23,7 @@ export const PeopleDetails = ({ onClose, data: { title, content } }) => {
 
           <CloseIcon h={5} w={5} cursor="pointer" onClick={onClose}></CloseIcon>
         </ModalHeader>
-
-        <Box w="120px" h="120px" border="1px solid white" mb={6} />
+        <PersonImage name={title} />
 
         <SimpleGrid columns={{ base: 1, md: 3 }} gap={8}>
           <ModalTag title="Gender" value={content.gender} />
